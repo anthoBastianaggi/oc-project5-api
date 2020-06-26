@@ -2,25 +2,20 @@
 
 namespace App\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Portfolio;
-use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
 use App\Entity\Service;
 use App\Entity\Skill;
-use App\Repository\PortfolioRepository;
-use App\Repository\ServiceRepository;
-use App\Repository\SkillRepository;
-use App\Repository\UserRepository;
+use Doctrine\DBAL\Exception\NotNullConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\Exception\RuntimeException;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class ApiController extends AbstractController
+class ApiPostController extends AbstractController
 {
     public function __construct(
         SerializerInterface $serializer,
@@ -72,7 +67,7 @@ class ApiController extends AbstractController
             $this->em->flush();
     
             return new Response('', Response::HTTP_CREATED);
-        } catch(RuntimeException $e) {
+        } catch(NotNullConstraintViolationException $e) {
             return $this->json([
                 'status' => 400,
                 'message' => $e->getMessage()
@@ -93,7 +88,7 @@ class ApiController extends AbstractController
             $this->em->flush();
     
             return new Response('', Response::HTTP_CREATED);
-        } catch(RuntimeException $e) {
+        } catch(NotNullConstraintViolationException $e) {
             return $this->json([
                 'status' => 400,
                 'message' => $e->getMessage()
