@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=CategorySkillsRepository::class)
@@ -18,12 +19,16 @@ class CategorySkills
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      * @Groups({"cat_skill"})
+     * @Assert\Type("Ramsey\Uuid\UuidInterface")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"cat_skill"})
+     * @Assert\NotBlank
+     * @Assert\Length(min=3)
+     * @Assert\Type("string")
      */
     private $name;
 

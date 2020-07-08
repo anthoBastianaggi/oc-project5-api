@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\PortfolioRepository;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=PortfolioRepository::class)
@@ -22,30 +23,43 @@ class Portfolio
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"list_portfolio"})
+     * @Assert\NotBlank
+     * @Assert\Length(min=3)
+     * @Assert\Type("string")
      */
     private $name;
 
     /**
      * @ORM\Column(type="text")
      * @Groups({"list_portfolio"})
+     * @Assert\NotBlank
+     * @Assert\Length(min=3)
+     * @Assert\Type("string")
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"list_portfolio"})
+     * @Assert\NotBlank
+     * @Assert\Type("string")
+     * @Assert\Url(message = "The url '{{ value }}' is not a valid url")
      */
     private $image;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"list_portfolio"})
+     * @Assert\NotBlank
+     * @Assert\Type("string")
+     * @Assert\Url(message = "The url '{{ value }}' is not a valid url")
      */
     private $link;
 
     /**
      * @ORM\Column(type="datetime")
      * @Groups({"list_portfolio"})
+     * @Assert\NotBlank
      */
     private $createdAt;
 
@@ -53,6 +67,7 @@ class Portfolio
      * @ORM\ManyToOne(targetEntity=CategoryPortfolio::class, inversedBy="portfolio")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"cat_portfolio"})
+     * @Assert\NotBlank
      */
     private $category;
 
