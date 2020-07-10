@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\SkillRepository;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=SkillRepository::class)
@@ -22,12 +23,17 @@ class Skill
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"list_skill"})
+     * @Assert\NotBlank
+     * @Assert\Length(min=3)
+     * @Assert\Type("string")
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=3)
      * @Groups({"list_skill"})
+     * @Assert\NotBlank
+     * @Assert\Type("numeric")
      */
     private $percentage;
 
@@ -35,6 +41,7 @@ class Skill
      * @ORM\ManyToOne(targetEntity=CategorySkills::class, inversedBy="skills")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"cat_skill"})
+     * @Assert\NotBlank
      */
     private $category;
 

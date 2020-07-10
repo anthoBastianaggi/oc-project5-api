@@ -22,6 +22,7 @@ class Service
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
      * @Assert\Length(min=3)
+     * @Assert\Type("string")
      */
     private $name;
 
@@ -29,6 +30,7 @@ class Service
      * @ORM\Column(type="text")
      * @Assert\NotBlank
      * @Assert\Length(min=3)
+     * @Assert\Type("string")
      */
     private $description;
 
