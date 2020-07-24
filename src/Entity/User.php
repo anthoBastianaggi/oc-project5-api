@@ -4,12 +4,15 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity(fields={"username"}, message="Cet utilisateur existe déjà")
  */
-class User
+class User implements UserInterface
 {
     /**
      * @ORM\Id()
@@ -19,23 +22,21 @@ class User
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Length(min=3)
      * @Assert\Type("string")
      */
     private $firstname;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Length(min=3)
      * @Assert\Type("string")
      */
     private $lastname;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=180, unique=true)
      * @Assert\NotBlank
      * @Assert\Length(min=3)
      * @Assert\Type("string")
@@ -43,84 +44,78 @@ class User
     private $username;
 
     /**
-     * @ORM\Column(type="date")
-     * @Assert\NotBlank
+     * @ORM\Column(type="json")
+     */
+    private $roles = [];
+
+    /**
+     * @ORM\Column(type="date", nullable=true)
      */
     private $birthdate;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Type("string")
      * @Assert\Url(message = "The url '{{ value }}' is not a valid url")
      */
     private $image;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Length(min=3)
      * @Assert\Type("string")
      */
     private $profile;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Length(min=3)
      * @Assert\Type("string")
      */
     private $status;
 
     /**
-     * @ORM\Column(type="text")
-     * @Assert\NotBlank
+     * @ORM\Column(type="text", nullable=true)
      * @Assert\Length(min=3)
      * @Assert\Type("string")
      */
     private $description;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Type("string")
      */
     private $address;
 
     /**
-     * @ORM\Column(type="string", length=5)
-     * @Assert\NotBlank
+     * @ORM\Column(type="string", length=5, nullable=true)
      * @Assert\Type("numeric")
      */
     private $postalCode;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Type("string")
      */
     private $city;
 
     /**
-     * @ORM\Column(type="string", length=10)
-     * @Assert\NotBlank
+     * @ORM\Column(type="string", length=10, nullable=true)
      * @Assert\Type("numeric")
      */
     private $phoneNumber;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Type("string")
      * @Assert\Email(message = "The email '{{ value }}' is not a valid email.")
      */
     private $email;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank
+     * @var string The hashed password
+     * @ORM\Column(type="string")
      * @Assert\Length(min=8)
-     * @Assert\Type("string")
      */
     private $password;
 
@@ -153,14 +148,38 @@ class User
         return $this;
     }
 
-    public function getUsername(): ?string
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUsername(): string
     {
-        return $this->username;
+        return (string) $this->username;
     }
 
     public function setUsername(string $username): self
     {
         $this->username = $username;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
 
         return $this;
     }
@@ -285,9 +304,12 @@ class User
         return $this;
     }
 
-    public function getPassword(): ?string
+    /**
+     * @see UserInterface
+     */
+    public function getPassword(): string
     {
-        return $this->password;
+        return (string) $this->password;
     }
 
     public function setPassword(string $password): self
@@ -295,5 +317,22 @@ class User
         $this->password = $password;
 
         return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getSalt()
+    {
+        // not needed when using the "bcrypt" algorithm in security.yaml
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
     }
 }

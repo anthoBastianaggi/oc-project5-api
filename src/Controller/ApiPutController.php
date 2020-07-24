@@ -9,7 +9,6 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -52,12 +51,11 @@ class ApiPutController extends AbstractController
         }
 
         $this->em->flush();
-        $data = [
+
+        return $this->json([
             'status' => 200,
-            'message' => 'Le user a bien été mis à jour'
-        ];
-        
-        return new JsonResponse($data);
+            'message' => 'The user has been updated.'
+        ], 200);
     }
 
     /**
@@ -85,12 +83,11 @@ class ApiPutController extends AbstractController
         }
 
         $this->em->flush();
-        $data = [
+
+        return $this->json([
             'status' => 200,
-            'message' => 'Le service a bien été mis à jour'
-        ];
-        
-        return new JsonResponse($data);
+            'message' => 'The service has been updated.'
+        ], 200);
     }
 
     
@@ -119,18 +116,17 @@ class ApiPutController extends AbstractController
         }
 
         $this->em->flush();
-        $data = [
-            'status' => 200,
-            'message' => 'La compétence a bien été mis à jour'
-        ];
         
-        return new JsonResponse($data);
+        return $this->json([
+            'status' => 200,
+            'message' => 'The skill has been updated.'
+        ], 200);
     }
 
      /**
-     * @Route("/api/portfolio/{id}", name="portfolio_update", methods={"PUT"})
+     * @Route("/api/portfolio/{id}", name="project_update", methods={"PUT"})
      */
-    public function portfolioUpdate(Request $request, Portfolio $portfolio)
+    public function projectUpdate(Request $request, Portfolio $portfolio)
     {
         $portfolioUpdate = $this->em->getRepository(Portfolio::class)->find($portfolio->getId());
         $data = json_decode($request->getContent());
@@ -152,11 +148,10 @@ class ApiPutController extends AbstractController
         }
 
         $this->em->flush();
-        $data = [
+       
+        return $this->json([
             'status' => 200,
-            'message' => 'Le portfolio a bien été mis à jour'
-        ];
-        
-        return new JsonResponse($data);
+            'message' => 'The project has been updated.'
+        ], 200);
     }
 }
