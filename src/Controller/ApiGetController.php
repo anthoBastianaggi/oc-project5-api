@@ -55,9 +55,9 @@ class ApiGetController extends AbstractController
     }
 
      /**
-     * @Route("/api/portfolio", name="portfolio_list", methods={"GET"})
+     * @Route("/api/portfolio", name="project_list", methods={"GET"})
      */
-    public function portfolioAction(PortfolioRepository $portfolioRepository)
+    public function projectAction(PortfolioRepository $portfolioRepository)
     {
         $portfolio = $portfolioRepository->findAll();
         $data = $this->serialize->serialize($portfolio, 'json', SerializationContext::create()->setGroups(array('list_portfolio', 'cat_portfolio')));

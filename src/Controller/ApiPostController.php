@@ -11,8 +11,8 @@ use App\Entity\Skill;
 use Doctrine\DBAL\Exception\NotNullConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\Exception\RuntimeException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ApiPostController extends AbstractController
@@ -30,6 +30,7 @@ class ApiPostController extends AbstractController
 
     /**
      * @Route("/api/services", name="service_store", methods={"POST"})
+     * @IsGranted("ROLE_ADMIN")
      */
     public function serviceStore(Request $request)
     {
@@ -44,8 +45,11 @@ class ApiPostController extends AbstractController
     
             $this->em->persist($service);
             $this->em->flush();
-    
-            return new Response('', Response::HTTP_CREATED);
+
+            return $this->json([
+                'status' => 201,
+                'message' => 'The service has been created.'
+            ], 201);
         } catch (RuntimeException $e) {
             return $this->json([
                 'status' => 400,
@@ -56,6 +60,7 @@ class ApiPostController extends AbstractController
 
     /**
      * @Route("/api/skills", name="skill_store", methods={"POST"})
+     * @IsGranted("ROLE_ADMIN")
      */
     public function skillStore(Request $request)
     {
@@ -66,7 +71,10 @@ class ApiPostController extends AbstractController
             $this->em->persist($skill);
             $this->em->flush();
     
-            return new Response('', Response::HTTP_CREATED);
+            return $this->json([
+                'status' => 201,
+                'message' => 'The skill has been created.'
+            ], 201);
         } catch(NotNullConstraintViolationException $e) {
             return $this->json([
                 'status' => 400,
@@ -76,9 +84,10 @@ class ApiPostController extends AbstractController
     }
 
     /**
-     * @Route("/api/portfolio", name="portfolio_store", methods={"POST"})
+     * @Route("/api/portfolio", name="project_store", methods={"POST"})
+     * @IsGranted("ROLE_ADMIN")
      */
-    public function portfolioStore(Request $request)
+    public function projectStore(Request $request)
     {
         try {
             $data = $request->getContent();
@@ -87,7 +96,10 @@ class ApiPostController extends AbstractController
             $this->em->persist($portfolio);
             $this->em->flush();
     
-            return new Response('', Response::HTTP_CREATED);
+            return $this->json([
+                'status' => 201,
+                'message' => 'The project has been created.'
+            ], 201);
         } catch(NotNullConstraintViolationException $e) {
             return $this->json([
                 'status' => 400,
