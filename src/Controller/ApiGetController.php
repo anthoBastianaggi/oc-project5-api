@@ -26,10 +26,17 @@ class ApiGetController extends AbstractController
      */
     public function userAction(UserRepository $userRepository)
     {
-        $users = $userRepository->findAll();
-        $data = $this->serialize->serialize($users, 'json');
-       
-        return new JsonResponse($data, 200, [], true);
+        try {
+            $users = $userRepository->findAll();
+            $data = $this->serialize->serialize($users, 'json');
+           
+            return new JsonResponse($data, 200, [], true);
+        } catch(\Exception $e) {
+            return $this->json([
+                'status' => 400,
+                'message' => $e->getMessage()
+            ], 400);
+        }        
     }
 
      /**
@@ -37,10 +44,17 @@ class ApiGetController extends AbstractController
      */
     public function serviceAction(ServiceRepository $serviceRepository)
     {
-        $services = $serviceRepository->findAll();
-        $data = $this->serialize->serialize($services, 'json');
-       
-        return new JsonResponse($data, 200, [], true);
+        try {
+            $services = $serviceRepository->findAll();
+            $data = $this->serialize->serialize($services, 'json');
+           
+            return new JsonResponse($data, 200, [], true);
+        } catch(\Exception $e) {
+            return $this->json([
+                'status' => 400,
+                'message' => $e->getMessage()
+            ], 400);
+        }        
     }
 
     /**
@@ -48,10 +62,17 @@ class ApiGetController extends AbstractController
      */
     public function skillAction(SkillRepository $skillRepository)
     {
-        $skills = $skillRepository->findAll();
-        $data = $this->serialize->serialize($skills, 'json', SerializationContext::create()->setGroups(array('list_skill', 'cat_skill')));
-
-        return new JsonResponse($data, 200, [], true);
+        try {
+            $skills = $skillRepository->findAll();
+            $data = $this->serialize->serialize($skills, 'json', SerializationContext::create()->setGroups(array('list_skill', 'cat_skill')));
+    
+            return new JsonResponse($data, 200, [], true);
+        } catch(\Exception $e) {
+            return $this->json([
+                'status' => 400,
+                'message' => $e->getMessage()
+            ], 400);
+        }        
     }
 
      /**
@@ -59,9 +80,16 @@ class ApiGetController extends AbstractController
      */
     public function projectAction(PortfolioRepository $portfolioRepository)
     {
-        $portfolio = $portfolioRepository->findAll();
-        $data = $this->serialize->serialize($portfolio, 'json', SerializationContext::create()->setGroups(array('list_portfolio', 'cat_portfolio')));
-
-        return new JsonResponse($data, 200, [], true);
+        try {
+            $portfolio = $portfolioRepository->findAll();
+            $data = $this->serialize->serialize($portfolio, 'json', SerializationContext::create()->setGroups(array('list_portfolio', 'cat_portfolio')));
+    
+            return new JsonResponse($data, 200, [], true);
+        } catch(\Exception $e) {
+            return $this->json([
+                'status' => 400,
+                'message' => $e->getMessage()
+            ], 400);
+        }        
     }
 }

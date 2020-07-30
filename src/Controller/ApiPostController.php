@@ -8,9 +8,7 @@ use App\Entity\Portfolio;
 use JMS\Serializer\SerializerInterface;
 use App\Entity\Service;
 use App\Entity\Skill;
-use Doctrine\DBAL\Exception\NotNullConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
-use JMS\Serializer\Exception\RuntimeException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -50,7 +48,7 @@ class ApiPostController extends AbstractController
                 'status' => 201,
                 'message' => 'The service has been created.'
             ], 201);
-        } catch (RuntimeException $e) {
+        } catch (\Exception $e) {
             return $this->json([
                 'status' => 400,
                 'message' => $e->getMessage()
@@ -66,7 +64,13 @@ class ApiPostController extends AbstractController
     {
         try {
             $data = $request->getContent();
+            dd($data);
             $skill = $this->serialize->deserialize($data, Skill::class, 'json');
+            $errors = $this->validator->validate($skill);
+
+            if(count($errors) > 0) {
+                return $this->json($errors, 400);
+            }
     
             $this->em->persist($skill);
             $this->em->flush();
@@ -75,7 +79,7 @@ class ApiPostController extends AbstractController
                 'status' => 201,
                 'message' => 'The skill has been created.'
             ], 201);
-        } catch(NotNullConstraintViolationException $e) {
+        } catch(\Exception $e) {
             return $this->json([
                 'status' => 400,
                 'message' => $e->getMessage()
@@ -92,6 +96,11 @@ class ApiPostController extends AbstractController
         try {
             $data = $request->getContent();
             $portfolio = $this->serialize->deserialize($data, Portfolio::class, 'json');
+            $errors = $this->validator->validate($portfolio);
+
+            if(count($errors) > 0) {
+                return $this->json($errors, 400);
+            }
             
             $this->em->persist($portfolio);
             $this->em->flush();
@@ -100,7 +109,7 @@ class ApiPostController extends AbstractController
                 'status' => 201,
                 'message' => 'The project has been created.'
             ], 201);
-        } catch(NotNullConstraintViolationException $e) {
+        } catch(\Exception $e) {
             return $this->json([
                 'status' => 400,
                 'message' => $e->getMessage()
