@@ -19,7 +19,6 @@ class CategoryPortfolio
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      * @Groups({"cat_portfolio"})
-     * @Assert\Type("Ramsey\Uuid\UuidInterface")
      */
     private $id;
 
