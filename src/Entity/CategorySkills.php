@@ -19,7 +19,6 @@ class CategorySkills
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      * @Groups({"cat_skill"})
-     * @Assert\Type("Ramsey\Uuid\UuidInterface")
      */
     private $id;
 
