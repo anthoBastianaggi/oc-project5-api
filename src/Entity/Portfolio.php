@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=PortfolioRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  */
 class Portfolio
 {
@@ -59,17 +60,24 @@ class Portfolio
     /**
      * @ORM\Column(type="datetime")
      * @Groups({"list_portfolio"})
-     * @Assert\NotBlank
      */
     private $createdAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity=CategoryPortfolio::class, inversedBy="portfolio")
+     * @ORM\ManyToOne(targetEntity=CategoryPortfolio::class, inversedBy="portfolio", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"cat_portfolio"})
      * @Assert\NotBlank
      */
     private $category;
+
+     /**
+     * @ORM\PrePersist
+     */
+    public function setCreatedAtValue()
+    {
+        $this->createdAt = new \DateTime();
+    }
 
     public function getId(): ?int
     {

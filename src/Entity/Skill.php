@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=SkillRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  */
 class Skill
 {
@@ -38,7 +39,7 @@ class Skill
     private $percentage;
 
     /**
-     * @ORM\ManyToOne(targetEntity=CategorySkills::class, inversedBy="skills")
+     * @ORM\ManyToOne(targetEntity=CategorySkills::class, inversedBy="skills", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"cat_skill"})
      * @Assert\NotBlank

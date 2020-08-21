@@ -82,18 +82,17 @@ class CategoryPortfolioController extends AbstractController
     public function categoryPortfolioUpdate(Request $request, CategoryPortfolio $categoryPortfolio)
     {
         try {
-            $categoryPortfolioUpdate = $this->em->getRepository(CategoryPortfolio::class)->find($categoryPortfolio->getId());
             $data = json_decode($request->getContent());
-    
+
             foreach ($data as $key => $value){
                 if($key && !empty($value)) {
                     $name = ucfirst($key);
                     $setter = 'set'.$name;
-                    $categoryPortfolioUpdate->$setter($value);
+                    $categoryPortfolio->$setter($value);
                 }
             }
     
-            $errors = $this->validator->validate($categoryPortfolioUpdate);
+            $errors = $this->validator->validate($categoryPortfolio);
             if(count($errors)) {
                 $errors = $this->serialize->serialize($errors, 'json');
                 return new Response($errors, 500, [

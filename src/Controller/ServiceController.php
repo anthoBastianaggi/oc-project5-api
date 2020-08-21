@@ -82,18 +82,17 @@ class ServiceController extends AbstractController
     public function serviceUpdate(Request $request, Service $service)
     {
         try {
-            $serviceUpdate = $this->em->getRepository(Service::class)->find($service->getId());
             $data = json_decode($request->getContent());
     
             foreach ($data as $key => $value){
                 if($key && !empty($value)) {
                     $name = ucfirst($key);
                     $setter = 'set'.$name;
-                    $serviceUpdate->$setter($value);
+                    $service->$setter($value);
                 }
             }
             
-            $errors = $this->validator->validate($serviceUpdate);
+            $errors = $this->validator->validate($service);
             if(count($errors)) {
                 $errors = $this->serialize->serialize($errors, 'json');
                 return new Response($errors, 500, [
