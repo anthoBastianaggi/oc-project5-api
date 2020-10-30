@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Portfolio;
+use App\Form\PortfolioType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
@@ -35,21 +36,30 @@ class PortfolioController extends AbstractController
     public function projectStore(Request $request)
     {
         try {
-            $data = $request->getContent();
-            $portfolio = $this->serialize->deserialize($data, Portfolio::class, 'json');
-            $errors = $this->validator->validate($portfolio);
+            $data = json_decode($request->getContent(), true);
+            $portfolio = new Portfolio();
+            $form = $this->createForm(PortfolioType::class, $portfolio);   
 
-            if(count($errors) > 0) {
-                return $this->json($errors, 400);
+            if ($request->isMethod('POST')) {
+                $form->submit($data);
+                $form->handleRequest($request);
+
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $this->em->persist($portfolio);
+                    $this->em->flush();
+                } else {
+                    return $this->json([
+                        'status' => 400,
+                        'message' => $form->getErrors()
+                    ], 400);
+                }
+
+                return $this->json([
+                    'status' => 201,
+                    'message' => 'The project has been created.'
+                ], 201);
             }
-            
-            $this->em->persist($portfolio);
-            $this->em->flush();
-    
-            return $this->json([
-                'status' => 201,
-                'message' => 'The project has been created.'
-            ], 201);
+
         } catch(\Exception $e) {
             return $this->json([
                 'status' => 400,
@@ -83,18 +93,17 @@ class PortfolioController extends AbstractController
     public function projectUpdate(Request $request, Portfolio $portfolio)
     {
         try {
-            $portfolioUpdate = $this->em->getRepository(Portfolio::class)->find($portfolio->getId());
             $data = json_decode($request->getContent());
     
             foreach ($data as $key => $value){
                 if($key && !empty($value)) {
                     $name = ucfirst($key);
                     $setter = 'set'.$name;
-                    $portfolioUpdate->$setter($value);
+                    $portfolio->$setter($value);
                 }
             }
     
-            $errors = $this->validator->validate($portfolioUpdate);
+            $errors = $this->validator->validate($portfolio);
             if(count($errors)) {
                 $errors = $this->serialize->serialize($errors, 'json');
                 return new Response($errors, 500, [

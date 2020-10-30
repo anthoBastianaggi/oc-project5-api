@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use App\Entity\Skill;
+use App\Form\SkillType;
 use App\Repository\SkillRepository;
 
 class SkillController extends AbstractController
@@ -35,21 +36,29 @@ class SkillController extends AbstractController
     public function skillStore(Request $request)
     {
         try {
-            $data = $request->getContent();
-            $skill = $this->serialize->deserialize($data, Skill::class, 'json');
-            $errors = $this->validator->validate($skill);
+            $data = json_decode($request->getContent(), true);
+            $skill = new Skill();
+            $form = $this->createForm(SkillType::class, $skill);
 
-            if(count($errors) > 0) {
-                return $this->json($errors, 400);
-            }
-    
-            $this->em->persist($skill);
-            $this->em->flush();
-    
-            return $this->json([
-                'status' => 201,
-                'message' => 'The skill has been created.'
-            ], 201);
+            if ($request->isMethod('POST')) {
+                $form->submit($data);
+                $form->handleRequest($request);
+
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $this->em->persist($skill);
+                    $this->em->flush();
+                } else {
+                    return $this->json([
+                        'status' => 400,
+                        'message' => $form->getErrors()
+                    ], 400);
+                }
+
+                return $this->json([
+                    'status' => 201,
+                    'message' => 'The skill has been created.'
+                ], 201);
+            }      
         } catch(\Exception $e) {
             return $this->json([
                 'status' => 400,
@@ -83,18 +92,17 @@ class SkillController extends AbstractController
     public function skillUpdate(Request $request, Skill $skill)
     {
         try {
-            $skillUpdate = $this->em->getRepository(Skill::class)->find($skill->getId());
             $data = json_decode($request->getContent());
     
             foreach ($data as $key => $value){
                 if($key && !empty($value)) {
                     $name = ucfirst($key);
                     $setter = 'set'.$name;
-                    $skillUpdate->$setter($value);
+                    $skill->$setter($value);
                 }
             }
     
-            $errors = $this->validator->validate($skillUpdate);
+            $errors = $this->validator->validate($skill);
             if(count($errors)) {
                 $errors = $this->serialize->serialize($errors, 'json');
                 return new Response($errors, 500, [

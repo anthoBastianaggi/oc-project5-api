@@ -83,18 +83,17 @@ class CategorySkillsController extends AbstractController
     public function categorySkillsUpdate(Request $request, CategorySkills $categorySkills)
     {
         try {
-            $categorySkillsUpdate = $this->em->getRepository(CategorySkills::class)->find($categorySkills->getId());
             $data = json_decode($request->getContent());
     
             foreach ($data as $key => $value){
                 if($key && !empty($value)) {
                     $name = ucfirst($key);
                     $setter = 'set'.$name;
-                    $categorySkillsUpdate->$setter($value);
+                    $categorySkills->$setter($value);
                 }
             }
     
-            $errors = $this->validator->validate($categorySkillsUpdate);
+            $errors = $this->validator->validate($categorySkills);
             if(count($errors)) {
                 $errors = $this->serialize->serialize($errors, 'json');
                 return new Response($errors, 500, [

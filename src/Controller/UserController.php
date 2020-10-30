@@ -52,18 +52,17 @@ class UserController extends AbstractController
     public function userUpdate(Request $request, User $user)
     {
         try {
-            $userUpdate = $this->em->getRepository(User::class)->find($user->getId());
             $data = json_decode($request->getContent());
     
             foreach ($data as $key => $value){
                 if($key && !empty($value)) {
                     $name = ucfirst($key);
                     $setter = 'set'.$name;
-                    $userUpdate->$setter($value);
+                    $user->$setter($value);
                 }
             }
     
-            $errors = $this->validator->validate($userUpdate);
+            $errors = $this->validator->validate($user);
             if(count($errors)) {
                 $errors = $this->serialize->serialize($errors, 'json');
                 return new Response($errors, 500, [
