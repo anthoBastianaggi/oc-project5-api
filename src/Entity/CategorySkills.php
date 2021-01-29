@@ -32,6 +32,15 @@ class CategorySkills
     private $name;
 
     /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"cat_skill"})
+     * @Assert\NotBlank
+     * @Assert\Length(min=3)
+     * @Assert\Type("string")
+     */
+    private $slug;
+
+    /**
      * @ORM\OneToMany(targetEntity=Skill::class, mappedBy="category")
      * 
      */
@@ -55,6 +64,18 @@ class CategorySkills
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }

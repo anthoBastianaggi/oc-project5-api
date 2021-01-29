@@ -31,6 +31,15 @@ class CategoryPortfolio
      */
     private $name;
 
+     /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"cat_portfolio"})
+     * @Assert\NotBlank
+     * @Assert\Length(min=3)
+     * @Assert\Type("string")
+     */
+    private $slug;
+
     /**
      * @ORM\OneToMany(targetEntity=Portfolio::class, mappedBy="category")
      */
@@ -54,6 +63,18 @@ class CategoryPortfolio
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }

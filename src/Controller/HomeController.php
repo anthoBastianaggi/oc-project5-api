@@ -11,11 +11,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use App\Repository\UserRepository;
-use App\Entity\User;
-use DateTime;
+use App\Entity\Home;
+use App\Repository\HomeRepository;
 
-class UserController extends AbstractController
+class HomeController extends AbstractController
 {
     public function __construct(
         SerializerInterface $serializer,
@@ -29,13 +28,13 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/api/users", name="users", methods={"GET"})
+     * @Route("/api/home", name="home_list", methods={"GET"})
      */
-    public function userAction(UserRepository $userRepository)
+    public function homeAction(HomeRepository $homeRepository)
     {
         try {
-            $users = $userRepository->findAll();
-            $data = $this->serialize->serialize($users, 'json');
+            $home = $homeRepository->findAll();
+            $data = $this->serialize->serialize($home, 'json');
            
             return new JsonResponse($data, 200, [], true);
         } catch(\Exception $e) {
@@ -46,28 +45,24 @@ class UserController extends AbstractController
         }        
     }
 
-     /**
-     * @Route("/api/users/{id}", name="users_update", methods={"PUT"})
+    /**
+     * @Route("/api/home/{id}", name="home_update", methods={"PUT"})
      * @IsGranted("ROLE_ADMIN")
      */
-    public function userUpdate(Request $request, User $user)
+    public function homeUpdate(Request $request, Home $home)
     {
         try {
-            $data = json_decode($request->getContent(), true);
-
-            if(!empty($data['birthdate'])) {
-                $data['birthdate'] = new DateTime($data['birthdate']);
-            }         
+            $data = json_decode($request->getContent());
     
             foreach ($data as $key => $value){
                 if($key && !empty($value)) {
                     $name = ucfirst($key);
                     $setter = 'set'.$name;
-                    $user->$setter($value);
+                    $home->$setter($value);
                 }
             }
-    
-            $errors = $this->validator->validate($user);
+            
+            $errors = $this->validator->validate($home);
             if(count($errors)) {
                 $errors = $this->serialize->serialize($errors, 'json');
                 return new Response($errors, 500, [
@@ -79,13 +74,13 @@ class UserController extends AbstractController
     
             return $this->json([
                 'status' => 200,
-                'message' => 'The user has been updated.'
+                'message' => 'The home has been updated.'
             ], 200);
         } catch(\Exception $e) {
             return $this->json([
                 'status' => 400,
                 'message' => $e->getMessage()
             ], 400);
-        }  
+        }        
     }
 }

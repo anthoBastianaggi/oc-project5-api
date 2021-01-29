@@ -60,10 +60,28 @@ class ServiceController extends AbstractController
      /**
      * @Route("/api/services", name="service_list", methods={"GET"})
      */
-    public function serviceAction(ServiceRepository $serviceRepository)
+    public function allServicesAction(ServiceRepository $serviceRepository)
     {
         try {
             $services = $serviceRepository->findAll();
+            $data = $this->serialize->serialize($services, 'json');
+           
+            return new JsonResponse($data, 200, [], true);
+        } catch(\Exception $e) {
+            return $this->json([
+                'status' => 400,
+                'message' => $e->getMessage()
+            ], 400);
+        }        
+    }
+
+     /**
+     * @Route("/api/services/{id}", name="service_show", methods={"GET"})
+     */
+    public function serviceAction(ServiceRepository $serviceRepository, $id)
+    {
+        try {
+            $services = $serviceRepository->find($id);
             $data = $this->serialize->serialize($services, 'json');
            
             return new JsonResponse($data, 200, [], true);

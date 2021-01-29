@@ -19,6 +19,7 @@ class PortfolioType extends AbstractType
             ->add('name', TextType::class)
             ->add('description', TextareaType::class)
             ->add('image', TextType::class)
+            ->add('alt', TextType::class)
             ->add('link', TextType::class)
             ->add('category', EntityType::class, array(
                 'class' => CategoryPortfolio::class,

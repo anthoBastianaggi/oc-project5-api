@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use App\Entity\Skill;
 use App\Form\SkillType;
+use App\Repository\CategorySkillsRepository;
 use App\Repository\SkillRepository;
 
 class SkillController extends AbstractController
@@ -70,7 +71,7 @@ class SkillController extends AbstractController
     /**
      * @Route("/api/skills", name="skill_list", methods={"GET"})
      */
-    public function skillAction(SkillRepository $skillRepository)
+    public function allSkillAction(SkillRepository $skillRepository)
     {
         try {
             $skills = $skillRepository->findAll();
@@ -85,14 +86,34 @@ class SkillController extends AbstractController
         }        
     }
 
+    /**
+     * @Route("/api/skills/{id}", name="skill_show", methods={"GET"})
+    */
+    public function skillAction(SkillRepository $skillRepository, $id)
+    {
+        try {
+            $skill = $skillRepository->find($id);
+            $data = $this->serialize->serialize($skill, 'json');
+           
+            return new JsonResponse($data, 200, [], true);
+        } catch(\Exception $e) {
+            return $this->json([
+                'status' => 400,
+                'message' => $e->getMessage()
+            ], 400);
+        }        
+    }
+
      /**
      * @Route("/api/skills/{id}", name="skill_update", methods={"PUT"})
      * @IsGranted("ROLE_ADMIN")
      */
-    public function skillUpdate(Request $request, Skill $skill)
+    public function skillUpdate(Request $request, Skill $skill, CategorySkillsRepository $categorySkillsRepository)
     {
         try {
-            $data = json_decode($request->getContent());
+            $data = json_decode($request->getContent(), true);
+
+            $data['category'] = $categorySkillsRepository->find($data['category']);
     
             foreach ($data as $key => $value){
                 if($key && !empty($value)) {

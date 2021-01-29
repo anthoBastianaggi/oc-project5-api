@@ -44,9 +44,16 @@ class Portfolio
      * @Groups({"list_portfolio"})
      * @Assert\NotBlank
      * @Assert\Type("string")
-     * @Assert\Url(message = "The url '{{ value }}' is not a valid url")
      */
     private $image;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"list_portfolio"})
+     * @Assert\NotBlank
+     * @Assert\Type("string")
+     */
+    private $alt;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -116,6 +123,18 @@ class Portfolio
     public function setImage(string $image): self
     {
         $this->image = $image;
+
+        return $this;
+    }
+
+    public function getAlt(): ?string
+    {
+        return $this->alt;
+    }
+
+    public function setAlt(?string $alt): self
+    {
+        $this->alt = $alt;
 
         return $this;
     }

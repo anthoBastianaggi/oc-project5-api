@@ -56,9 +56,15 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Type("string")
-     * @Assert\Url(message = "The url '{{ value }}' is not a valid url")
      */
     private $image;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotBlank
+     * @Assert\Type("string")
+     */
+    private $alt;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -100,6 +106,12 @@ class User implements UserInterface
     private $city;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Type("string")
+     */
+    private $country;
+
+    /**
      * @ORM\Column(type="string", length=10, nullable=true)
      * @Assert\Type("numeric")
      */
@@ -118,6 +130,20 @@ class User implements UserInterface
      * @Assert\Length(min=8)
      */
     private $password;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Type("string")
+     * @Assert\Url(message = "The url '{{ value }}' is not a valid url")
+     */
+    private $visual_cv;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Type("string")
+     * @Assert\Url(message = "The url '{{ value }}' is not a valid url")
+     */
+    private $download_cv;
 
     public function getId(): ?int
     {
@@ -208,6 +234,18 @@ class User implements UserInterface
         return $this;
     }
 
+    public function getAlt(): ?string
+    {
+        return $this->alt;
+    }
+
+    public function setAlt(?string $alt): self
+    {
+        $this->alt = $alt;
+
+        return $this;
+    }
+
     public function getProfile(): ?string
     {
         return $this->profile;
@@ -280,6 +318,18 @@ class User implements UserInterface
         return $this;
     }
 
+    public function getCountry(): ?string
+    {
+        return $this->country;
+    }
+
+    public function setCountry(string $country): self
+    {
+        $this->country = $country;
+
+        return $this;
+    }
+
     public function getPhoneNumber(): ?string
     {
         return $this->phoneNumber;
@@ -315,6 +365,30 @@ class User implements UserInterface
     public function setPassword(string $password): self
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getVisual_cv(): ?string
+    {
+        return $this->visual_cv;
+    }
+
+    public function setVisual_cv(string $visual_cv): self
+    {
+        $this->visual_cv = $visual_cv;
+
+        return $this;
+    }
+
+    public function getDownload_cv(): ?string
+    {
+        return $this->download_cv;
+    }
+
+    public function setDownload_cv(string $download_cv): self
+    {
+        $this->download_cv = $download_cv;
 
         return $this;
     }

@@ -61,7 +61,7 @@ class CategorySkillsController extends AbstractController
     /**
     * @Route("/api/categorySkills", name="category_skills_list", methods={"GET"})
     */
-    public function categorySkillsAction(CategorySkillsRepository $categorySkillsRepository)
+    public function allCategorySkillsAction(CategorySkillsRepository $categorySkillsRepository)
     {
         try {
             $categorySkills = $categorySkillsRepository->findAll();
@@ -74,6 +74,24 @@ class CategorySkillsController extends AbstractController
                 'message' => $e->getMessage()
             ], 400);
         }          
+    }
+
+     /**
+     * @Route("/api/categorySkills/{id}", name="category_skill_show", methods={"GET"})
+     */
+    public function categorySkillAction(CategorySkillsRepository $categorySkillsRepository, $id)
+    {
+        try {
+            $categorySkills = $categorySkillsRepository->find($id);
+            $data = $this->serialize->serialize($categorySkills, 'json');
+           
+            return new JsonResponse($data, 200, [], true);
+        } catch(\Exception $e) {
+            return $this->json([
+                'status' => 400,
+                'message' => $e->getMessage()
+            ], 400);
+        }        
     }
 
     /**
