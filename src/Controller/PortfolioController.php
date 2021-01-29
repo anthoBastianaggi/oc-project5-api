@@ -7,6 +7,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Portfolio;
 use App\Form\PortfolioType;
+use App\Repository\CategoryPortfolioRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
@@ -71,7 +72,7 @@ class PortfolioController extends AbstractController
     /**
      * @Route("/api/portfolio", name="project_list", methods={"GET"})
      */
-    public function projectAction(PortfolioRepository $portfolioRepository)
+    public function allProjectAction(PortfolioRepository $portfolioRepository)
     {
         try {
             $portfolio = $portfolioRepository->findAll();
@@ -86,14 +87,34 @@ class PortfolioController extends AbstractController
         }        
     }
 
+    /**
+     * @Route("/api/portfolio/{id}", name="portfolio_show", methods={"GET"})
+     */
+    public function projectAction(PortfolioRepository $portfolioRepository, $id)
+    {
+        try {
+            $portfolio = $portfolioRepository->find($id);
+            $data = $this->serialize->serialize($portfolio, 'json');
+           
+            return new JsonResponse($data, 200, [], true);
+        } catch(\Exception $e) {
+            return $this->json([
+                'status' => 400,
+                'message' => $e->getMessage()
+            ], 400);
+        }        
+    }
+
      /**
      * @Route("/api/portfolio/{id}", name="project_update", methods={"PUT"})
      * @IsGranted("ROLE_ADMIN")
      */
-    public function projectUpdate(Request $request, Portfolio $portfolio)
+    public function projectUpdate(Request $request, Portfolio $portfolio, CategoryPortfolioRepository $categoryPortfolioRepository)
     {
         try {
-            $data = json_decode($request->getContent());
+            $data = json_decode($request->getContent(), true);
+
+            $data['category'] = $categoryPortfolioRepository->find($data['category']);
     
             foreach ($data as $key => $value){
                 if($key && !empty($value)) {

@@ -34,6 +34,12 @@ class Service
      */
     private $description;
 
+     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Type("string")
+     */
+    private $icon;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -59,6 +65,18 @@ class Service
     public function setDescription(string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getIcon(): ?string
+    {
+        return $this->icon;
+    }
+
+    public function setIcon(string $icon): self
+    {
+        $this->icon = $icon;
 
         return $this;
     }

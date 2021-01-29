@@ -60,7 +60,7 @@ class CategoryPortfolioController extends AbstractController
      /**
      * @Route("/api/categoryPortfolio", name="category_portfolio_list", methods={"GET"})
      */
-    public function categoryPortfolioAction(CategoryPortfolioRepository $categoryPortfolioRepository)
+    public function allCategoryPortfolioAction(CategoryPortfolioRepository $categoryPortfolioRepository)
     {
         try {
             $categoryPortfolio = $categoryPortfolioRepository->findAll();
@@ -73,6 +73,24 @@ class CategoryPortfolioController extends AbstractController
                 'message' => $e->getMessage()
             ], 400);
         }          
+    }
+
+      /**
+     * @Route("/api/categoryPortfolio/{id}", name="category_portfolio_show", methods={"GET"})
+     */
+    public function categoryPortfolioAction(CategoryPortfolioRepository $categoryPortfolioRepository, $id)
+    {
+        try {
+            $categoryPortfolio = $categoryPortfolioRepository->find($id);
+            $data = $this->serialize->serialize($categoryPortfolio, 'json');
+           
+            return new JsonResponse($data, 200, [], true);
+        } catch(\Exception $e) {
+            return $this->json([
+                'status' => 400,
+                'message' => $e->getMessage()
+            ], 400);
+        }        
     }
 
      /**
