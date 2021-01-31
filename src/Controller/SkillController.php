@@ -113,7 +113,9 @@ class SkillController extends AbstractController
         try {
             $data = json_decode($request->getContent(), true);
 
-            $data['category'] = $categorySkillsRepository->find($data['category']);
+            if(!empty($data['category'])) {
+                $data['category'] = $categorySkillsRepository->find($data['category']);
+            }
     
             foreach ($data as $key => $value){
                 if($key && !empty($value)) {
