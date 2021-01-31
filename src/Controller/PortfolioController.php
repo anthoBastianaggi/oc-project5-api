@@ -114,7 +114,9 @@ class PortfolioController extends AbstractController
         try {
             $data = json_decode($request->getContent(), true);
 
-            $data['category'] = $categoryPortfolioRepository->find($data['category']);
+            if(!empty($data['category'])) {
+                $data['category'] = $categoryPortfolioRepository->find($data['category']);
+            }  
     
             foreach ($data as $key => $value){
                 if($key && !empty($value)) {
