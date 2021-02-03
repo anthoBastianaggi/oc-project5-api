@@ -43,8 +43,8 @@ class ContactController extends AbstractController
             $this->em->flush();
 
             $email = (new Email())
-                ->from('a.bastianaggi@gmail.com')
-                ->to($contact->getEmail())
+                ->from($contact->getEmail())
+                ->to('a.bastianaggi@gmail.com')
                 ->subject($contact->getSubject())
                 ->text($contact->getContent());
             
